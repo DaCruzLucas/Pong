@@ -23,12 +23,26 @@ namespace PongLibrary
 
         public void MoveLeft(int v)
         {
-            this.X -= v;
+            if(this.X <= 0)
+            {
+                this.X = 0;
+            }
+            else
+            {
+                this.X -= v;
+            }
         }
 
-        public void MoveRight(int v)
+        public void MoveRight(int v, int pbW)
         {
-            this.X += v;
+            if(this.X >= pbW - this.Width)
+            {
+                this.X = pbW - this.Width;
+            }
+            else
+            {
+                this.X += v;
+            }
         }
 
         public void Draw(Graphics g)
