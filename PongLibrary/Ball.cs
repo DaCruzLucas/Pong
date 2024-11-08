@@ -1,30 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace PongLibrary
 {
     public class Ball
     {
-        static Random rnd = new Random();
-        Color Color;
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float D { get; set; }
-        public Brush Brush { get; set; }
-        public float Vx { get; set; }
-        public float Vy { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int D { get; set; }
+        public int Vx { get; set; }
+        public int Vy { get; set; }
 
-        public Ball(float x, float y, float d, float vx, float vy)
+        public Ball(int x, int y, int d, int vx, int vy)
         {
             this.X = x;
             this.Y = y;
             this.D = d;
-            Color = Color.Red;
-            this.Brush = new SolidBrush(Color);
             this.Vx = vx;
             this.Vy = vx;
         }
@@ -57,7 +47,7 @@ namespace PongLibrary
         }
         public void Draw(Graphics e)
         {
-            e.FillEllipse(Brush, X, Y, D, D);
+            e.FillEllipse(Brushes.Red, X, Y, D, D);
         }
     }
 }
