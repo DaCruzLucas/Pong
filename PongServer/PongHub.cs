@@ -46,11 +46,12 @@ namespace PongServer
 
             ps.UpdatePartie(id, player1, player2);
 
-            Partie partie = ps.GetPartie(id);
+            await Clients.GroupExcept(id.ToString(), Context.ConnectionId).SendAsync("PartieRefresh", player1, player2);
+        }
 
-            int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
-
-            await Clients.GroupExcept(id.ToString(), Context.ConnectionId).SendAsync("PartieRefresh", player1, player2, ball);
+        public async Task UpdatePartieBall(int id, int[] ball)
+        {
+            await Clients.Group(id.ToString()).SendAsync("PartieRefreshBall", ball);
         }
 
         public async Task GetPartie(int id)

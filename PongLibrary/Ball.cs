@@ -45,6 +45,16 @@ namespace PongLibrary
                 this.Vy *= -1;
             }
         }
+
+        public bool Collide(Player p)
+        {
+            if (this.X + this.D >= p.X && this.X <= p.X + p.Width && this.Y + this.D >= p.Y && this.Y <= p.Y + p.Height)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public void Draw(Graphics e)
         {
             e.FillEllipse(Brushes.Red, X, Y, D, D);

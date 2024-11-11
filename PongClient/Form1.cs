@@ -46,9 +46,12 @@ namespace PongClient
                 await UpdatePartie();
             });
 
-            connection.On<int[], int[], int[]>("PartieRefresh", (player1, player2, ball) =>
+            connection.On<int[], int[]>("PartieRefresh", (player1, player2) =>
             {
-                if (partie == null) return;
+                if (partie == null)
+                {
+                    return;
+                }
 
                 if (player1 != null)
                 {
@@ -78,6 +81,14 @@ namespace PongClient
                         partie.player2.Width = player2[2];
                         partie.player2.Height = player2[3];
                     }
+                }
+            });
+
+            connection.On<int[]>("PartieRefreshBall", (ball) =>
+            {
+                if (partie == null)
+                {
+                    return;
                 }
 
                 partie.ball.X = ball[0];

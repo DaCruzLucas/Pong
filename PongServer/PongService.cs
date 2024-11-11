@@ -7,7 +7,7 @@ namespace PongServer
     public class PongService
     {
         private readonly IHubContext<PongHub> hub;
-        private readonly System.Timers.Timer timer;
+        private readonly System.Timers.Timer timer = new System.Timers.Timer(20);
 
         private Dictionary<int, Partie> Parties = new Dictionary<int, Partie>();
 
@@ -17,14 +17,40 @@ namespace PongServer
         {
             this.hub = hub;
 
-            timer = new System.Timers.Timer(1000 / 60);
             timer.Elapsed += Tick;
             timer.Start();
         }
 
-        private void Tick(object sender, ElapsedEventArgs e)
+        private async void Tick(object sender, ElapsedEventArgs e)
         {
+            //Console.WriteLine("Tick! The time is {0:HH:mm:ss.fff}", e.SignalTime);
 
+            foreach (Partie partie in Parties.Values)
+            {
+                partie.ball.Update(650, 700);
+
+                if (partie.player1 != null)
+                {
+                    if (partie.ball.Collide(partie.player1))
+                    {
+                        //partie.ball.Vx = -partie.ball.Vx;
+                        partie.ball.Vy = -partie.ball.Vy;
+                    }
+                }
+
+                if (partie.player2 != null)
+                {
+                    if (partie.ball.Collide(partie.player2))
+                    {
+                        //partie.ball.Vx = -partie.ball.Vx;
+                        partie.ball.Vy = -partie.ball.Vy;
+                    }
+                }
+
+                int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
+
+                await hub.Clients.Group(id.ToString()).SendAsync("PartieRefreshBall", ball);
+            }   
         }
 
         private int NextId()
