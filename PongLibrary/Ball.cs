@@ -46,13 +46,26 @@ namespace PongLibrary
             }
         }
 
-        public bool Collide(Player p)
+        public int Collide(Player p)
         {
             if (this.X + this.D >= p.X && this.X <= p.X + p.Width && this.Y + this.D >= p.Y && this.Y <= p.Y + p.Height)
             {
-                return true;
+                int distHaut = Math.Abs((this.Y + this.D) - p.Y);
+                int distBas = Math.Abs(this.Y - (p.Y + p.Height));
+                int distGauche = Math.Abs((this.X + this.D) - p.X);
+                int distDroite = Math.Abs(this.X - (p.X + p.Width));
+
+                if (distHaut < distGauche && distHaut < distDroite || distBas < distGauche && distBas < distDroite)
+                {
+                    return 1; // Collision verticale
+                }
+                else
+                {
+                    return 2; // Collision horizontale
+                }
             }
-            return false;
+
+            return 0;
         }
 
         public void Draw(Graphics e)

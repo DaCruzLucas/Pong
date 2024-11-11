@@ -31,19 +31,28 @@ namespace PongServer
 
                 if (partie.player1 != null)
                 {
-                    if (partie.ball.Collide(partie.player1))
+                    int collision = partie.ball.Collide(partie.player1);
+
+                    if (collision == 1)
                     {
-                        //partie.ball.Vx = -partie.ball.Vx;
                         partie.ball.Vy = -partie.ball.Vy;
+                    }else if (collision == 2)
+                    {
+                        partie.ball.Vx = -partie.ball.Vx;
                     }
                 }
 
                 if (partie.player2 != null)
                 {
-                    if (partie.ball.Collide(partie.player2))
+                    int collision = partie.ball.Collide(partie.player2);
+
+                    if (collision == 1)
                     {
-                        //partie.ball.Vx = -partie.ball.Vx;
+                        
                         partie.ball.Vy = -partie.ball.Vy;
+                    }else if (collision == 2)
+                    {
+                        partie.ball.Vx = -partie.ball.Vx;
                     }
                 }
 
