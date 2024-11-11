@@ -86,7 +86,7 @@ namespace PongServer
 
                 int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
 
-                await hub.Clients.Group(id.ToString()).SendAsync("PartieRefreshBall", ball);
+                await hub.Clients.Group(partie.Id.ToString()).SendAsync("PartieRefreshBall", ball);
             }   
         }
 

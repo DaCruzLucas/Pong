@@ -19,7 +19,7 @@ namespace PongClient
             InitializeComponent();
 
             connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5000/pong")
+                .WithUrl("http://pc-bd18-18:5000/pong")
                 .Build();
 
             connection.Closed += async (error) =>
@@ -27,6 +27,8 @@ namespace PongClient
                 await Task.Delay(new Random().Next(0, 5) * 1000);
                 await connection.StartAsync();
             };
+
+            
 
             connection.On<int, int[], int[], int[]> ("PartieJoined", async (id, player1, player2, ball) =>
             {

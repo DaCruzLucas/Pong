@@ -40,6 +40,17 @@ namespace PongServer
             await base.OnConnectedAsync();
         }
 
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            //// Retirer le joueur de la partie et notifier les autres joueurs
+            //int partieId = ps.RemovePlayerFromPartie(Context.ConnectionId);
+            //await Clients.Group(partieId.ToString()).SendAsync("PlayerDisconnected", Context.ConnectionId);
+                
+            //Console.WriteLine($"Connection {Context.ConnectionId} left partie {partieId}");
+
+            await base.OnDisconnectedAsync(exception);
+        }
+
         public async Task UpdatePartie(int id, int[] player1, int[] player2)
         {
             //Console.WriteLine($"Connection {Context.ConnectionId} updated partie {id}")
