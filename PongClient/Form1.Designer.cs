@@ -32,7 +32,6 @@
             pb = new PictureBox();
             tmr = new System.Windows.Forms.Timer(components);
             HostBTN = new Button();
-            label1 = new Label();
             JoinBTN = new Button();
             JoinInput = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pb).BeginInit();
@@ -57,31 +56,19 @@
             // 
             // HostBTN
             // 
-            HostBTN.Location = new Point(260, 345);
+            HostBTN.Location = new Point(251, 345);
             HostBTN.Name = "HostBTN";
-            HostBTN.Size = new Size(75, 23);
+            HostBTN.Size = new Size(100, 23);
             HostBTN.TabIndex = 1;
             HostBTN.Text = "Host";
             HostBTN.UseVisualStyleBackColor = true;
             HostBTN.Click += HostBTN_Click;
             // 
-            // label1
-            // 
-            label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label1.AutoSize = true;
-            label1.BackColor = SystemColors.GradientActiveCaption;
-            label1.Font = new Font("Segoe UI", 30F);
-            label1.Location = new Point(251, 89);
-            label1.Name = "label1";
-            label1.Size = new Size(114, 54);
-            label1.TabIndex = 2;
-            label1.Text = "Pong";
-            // 
             // JoinBTN
             // 
-            JoinBTN.Location = new Point(260, 302);
+            JoinBTN.Location = new Point(251, 302);
             JoinBTN.Name = "JoinBTN";
-            JoinBTN.Size = new Size(75, 23);
+            JoinBTN.Size = new Size(100, 23);
             JoinBTN.TabIndex = 3;
             JoinBTN.Text = "Join";
             JoinBTN.UseVisualStyleBackColor = true;
@@ -101,10 +88,10 @@
             ClientSize = new Size(634, 661);
             Controls.Add(JoinInput);
             Controls.Add(JoinBTN);
-            Controls.Add(label1);
             Controls.Add(HostBTN);
             Controls.Add(pb);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            KeyPreview = true;
             Name = "Form1";
             Text = "Pong Game";
             KeyDown += Form1_KeyDown;
@@ -119,7 +106,6 @@
         private PictureBox pb;
         private System.Windows.Forms.Timer tmr;
         private Button button1;
-        private Label label1;
         private Button button2;
         private Button HostBTN;
         private Button JoinBTN;

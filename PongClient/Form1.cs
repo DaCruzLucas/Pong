@@ -60,7 +60,7 @@ namespace PongClient
             pb.Invalidate();
         }
 
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        private async void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.A)
             {
@@ -69,6 +69,19 @@ namespace PongClient
             else if (e.KeyCode == Keys.D)
             {
                 right = true;
+            }
+            else if (e.KeyCode== Keys.Escape)
+            {
+                await connection.DisposeAsync();
+                await server.StopServerAsync();
+
+                partie = null;
+
+                JoinInput.Visible = true;
+                JoinBTN.Visible = true;
+                HostBTN.Visible = true;
+
+                Refresh();
             }
         }
 
@@ -97,6 +110,11 @@ namespace PongClient
 
         private void StartServerConnection(string adresse)
         {
+            if (adresse == "")
+            {
+                adresse = "localhost";
+            }
+
             connection = new HubConnectionBuilder()
                 .WithUrl($"http://{adresse}:5000/pong")
                 .Build();
