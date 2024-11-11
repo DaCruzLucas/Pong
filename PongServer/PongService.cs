@@ -36,9 +36,22 @@ namespace PongServer
                     if (collision == 1)
                     {
                         partie.ball.Vy = -partie.ball.Vy;
-                    }else if (collision == 2)
+                        partie.ball.Y = partie.player1.Y - partie.ball.D - 1;
+                    }
+                    else if (collision == 2)
+                    {
+                        partie.ball.Vy = -partie.ball.Vy;
+                        partie.ball.Y = partie.player1.Y + partie.player1.Height + 1;
+                    }
+                    else if(collision == 3)
                     {
                         partie.ball.Vx = -partie.ball.Vx;
+                        partie.ball.X = partie.player1.X - partie.ball.D - 1;
+                    }
+                    else if (collision == 4)
+                    {
+                        partie.ball.Vx = -partie.ball.Vx;
+                        partie.ball.X = partie.player1.X + partie.player1.Width + 1;
                     }
                 }
 

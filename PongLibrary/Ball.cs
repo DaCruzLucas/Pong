@@ -48,22 +48,26 @@ namespace PongLibrary
 
         public int Collide(Player p)
         {
-            if (this.X + this.D >= p.X && this.X <= p.X + p.Width && this.Y + this.D >= p.Y && this.Y <= p.Y + p.Height)
-            {
-                int distHaut = Math.Abs((this.Y + this.D) - p.Y);
-                int distBas = Math.Abs(this.Y - (p.Y + p.Height));
-                int distGauche = Math.Abs((this.X + this.D) - p.X);
-                int distDroite = Math.Abs(this.X - (p.X + p.Width));
+            if (this.X + this.D >= p.X && this.X <= p.X + p.Width &&
+                this.Y + this.D >= p.Y && this.Y <= p.Y + p.Height)
+                {
+                    int distHaut = Math.Abs((this.Y + this.D) - p.Y);
+                    int distBas = Math.Abs(this.Y - (p.Y + p.Height));
+                    int distGauche = Math.Abs((this.X + this.D) - p.X);
+                    int distDroite = Math.Abs(this.X - (p.X + p.Width));
 
-                if (distHaut < distGauche && distHaut < distDroite || distBas < distGauche && distBas < distDroite)
-                {
-                    return 1; // Collision verticale
+                    // Collision verticale (haut ou bas)
+                    if ((distHaut < distGauche && distHaut < distDroite) ||
+                        (distBas < distGauche && distBas < distDroite))
+                    {
+                        return (distHaut < distBas) ? 1 : 2; // 1 pour haut, 2 pour bas
+                    }
+                    // Collision horizontale (gauche ou droite)
+                    else
+                    {
+                        return (distGauche < distDroite) ? 3 : 4; // 3 pour gauche, 4 pour droite
+                    }
                 }
-                else
-                {
-                    return 2; // Collision horizontale
-                }
-            }
 
             return 0;
         }
