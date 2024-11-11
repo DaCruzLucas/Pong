@@ -6,20 +6,99 @@ namespace PongClient
 {
     public partial class Form1 : Form
     {
-        HubConnection connection;
-
+        private Server server = new Server();
+        private HubConnection connection;
         private Partie partie;
 
         private int idPlayer = 1;
-
         private bool left = false;
         private bool right = false;
+
         public Form1()
         {
             InitializeComponent();
 
+            this.ClientSize = new Size(650, 700);
+
+            //StartServerConnection("localhost");
+        }
+
+        private async void tmr_Tick(object sender, EventArgs e)
+        {
+            if (partie == null)
+            {
+                return;
+            }
+
+            if (idPlayer == 1)
+            {
+                if (left)
+                {
+                    partie.player1.MoveLeft(10);
+                    await UpdatePartie();
+                }
+                else if (right)
+                {
+                    partie.player1.MoveRight(10, pb.Width);
+                    await UpdatePartie();
+                }
+            }
+            else if (idPlayer == 2)
+            {
+                if (left)
+                {
+                    partie.player2.MoveLeft(10);
+                    await UpdatePartie();
+                }
+                else if (right)
+                {
+                    partie.player2.MoveRight(10, pb.Width);
+                    await UpdatePartie();
+                }
+            }
+
+            pb.Invalidate();
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.A)
+            {
+                left = true;
+            }
+            else if (e.KeyCode == Keys.D)
+            {
+                right = true;
+            }
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.A)
+            {
+                left = false;
+            }
+            else if (e.KeyCode == Keys.D)
+            {
+                right = false;
+            }
+        }
+
+        private void pb_Paint(object sender, PaintEventArgs e)
+        {
+            if (partie == null) return;
+
+            if (partie.player1 != null) partie.player1.Draw(e.Graphics);
+
+            if (partie.player2 != null) partie.player2.Draw(e.Graphics);
+
+            if (partie.ball != null) partie.ball.Draw(e.Graphics);
+        }
+
+        private void StartServerConnection(string adresse)
+        {
             connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5000/pong")
+                .WithUrl($"http://{adresse}:5000/pong")
                 .Build();
 
             connection.Closed += async (error) =>
@@ -27,8 +106,6 @@ namespace PongClient
                 await Task.Delay(new Random().Next(0, 5) * 1000);
                 await connection.StartAsync();
             };
-
-
 
             connection.On<int, int[], int[], int[]>("PartieJoined", async (id, player1, player2, ball) =>
             {
@@ -101,91 +178,6 @@ namespace PongClient
             });
 
             connection.StartAsync();
-
-            this.ClientSize = new Size(650, 700);
-
-            //partie.player1 = new Player(100, 30, 100, 30);
-            //partie.player2 = new Player(100, 635, 100, 30);
-
-            //partie.ball = new Ball(250, 250, 30, 10, 7);
-        }
-
-        private async void tmr_Tick(object sender, EventArgs e)
-        {
-            if (partie == null)
-            {
-                return;
-            }
-            else
-            {
-                //await connection.SendAsync("GetPartie", partie.Id);
-            }
-
-            if (idPlayer == 1)
-            {
-                if (left)
-                {
-                    partie.player1.MoveLeft(10);
-                    await UpdatePartie();
-                }
-                else if (right)
-                {
-                    partie.player1.MoveRight(10, pb.Width);
-                    await UpdatePartie();
-                }
-            }
-            else if (idPlayer == 2)
-            {
-                if (left)
-                {
-                    partie.player2.MoveLeft(10);
-                    await UpdatePartie();
-                }
-                else if (right)
-                {
-                    partie.player2.MoveRight(10, pb.Width);
-                    await UpdatePartie();
-                }
-            }
-
-            //partie.ball.Update(pb.Width, pb.Height);
-
-            pb.Invalidate();
-        }
-
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.A)
-            {
-                left = true;
-            }
-            else if (e.KeyCode == Keys.D)
-            {
-                right = true;
-            }
-        }
-
-        private void Form1_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.A)
-            {
-                left = false;
-            }
-            else if (e.KeyCode == Keys.D)
-            {
-                right = false;
-            }
-        }
-
-        private void pb_Paint(object sender, PaintEventArgs e)
-        {
-            if (partie == null) return;
-
-            if (partie.player1 != null) partie.player1.Draw(e.Graphics);
-
-            if (partie.player2 != null) partie.player2.Draw(e.Graphics);
-
-            if (partie.ball != null) partie.ball.Draw(e.Graphics);
         }
 
         private Partie CreatePartie(int id, int[] player1, int[] player2, int[] ball)
@@ -226,12 +218,24 @@ namespace PongClient
 
         private void HostBTN_Click(object sender, EventArgs e)
         {
+            server.StartServer();
 
+            JoinInput.Visible = false;
+            JoinBTN.Visible = false;
+            HostBTN.Visible = false;
+
+            StartServerConnection("localhost");
         }
 
-        private void JoinBTN_Click(object sender, EventArgs e)
+        private async void JoinBTN_Click(object sender, EventArgs e)
         {
+            await server.StopServerAsync();
 
+            JoinInput.Visible = false;
+            JoinBTN.Visible = false;
+            HostBTN.Visible = false;
+
+            StartServerConnection(JoinInput.Text);
         }
     }
 }

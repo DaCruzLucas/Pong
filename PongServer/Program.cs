@@ -1,5 +1,4 @@
 using PongServer;
-using System.Timers;
 
 var builder = WebApplication.CreateBuilder(args);
 
