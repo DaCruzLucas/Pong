@@ -28,9 +28,9 @@ namespace PongClient
                 await connection.StartAsync();
             };
 
-            
 
-            connection.On<int, int[], int[], int[]> ("PartieJoined", async (id, player1, player2, ball) =>
+
+            connection.On<int, int[], int[], int[]>("PartieJoined", async (id, player1, player2, ball) =>
             {
                 partie = CreatePartie(id, player1, player2, ball);
 
@@ -115,13 +115,13 @@ namespace PongClient
             if (partie == null)
             {
                 return;
-            } 
+            }
             else
             {
                 //await connection.SendAsync("GetPartie", partie.Id);
             }
 
-            if(idPlayer == 1)
+            if (idPlayer == 1)
             {
                 if (left)
                 {
@@ -222,6 +222,16 @@ namespace PongClient
             }
 
             await connection.SendAsync("UpdatePartie", partie.Id, player1, player2);
+        }
+
+        private void HostBTN_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void JoinBTN_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
