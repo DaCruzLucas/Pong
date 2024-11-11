@@ -25,8 +25,9 @@ namespace PongServer
         {
             //Console.WriteLine("Tick! The time is {0:HH:mm:ss.fff}", e.SignalTime);
 
-            foreach (Partie partie in Parties.Values)
+            for (int i = 0; i < Parties.Values.Count; i++)
             {
+                Partie partie = Parties.Values.ElementAt(i);
                 partie.ball.Update(650, 700);
 
                 if (partie.player1 != null)
@@ -43,7 +44,7 @@ namespace PongServer
                         partie.ball.Vy = -partie.ball.Vy;
                         partie.ball.Y = partie.player1.Y + partie.player1.Height + 1;
                     }
-                    else if(collision == 3)
+                    else if (collision == 3)
                     {
                         partie.ball.Vx = -partie.ball.Vx;
                         partie.ball.X = partie.player1.X - partie.ball.D - 1;
@@ -87,7 +88,7 @@ namespace PongServer
                 int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
 
                 await hub.Clients.Group(partie.Id.ToString()).SendAsync("PartieRefreshBall", ball);
-            }   
+            }
         }
 
         private int NextId()
