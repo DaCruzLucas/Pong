@@ -28,7 +28,7 @@ namespace PongClient
                 await connection.StartAsync();
             };
 
-            connection.On<int, int[], int[], int[]>("PartieJoined", (id, player1, player2, ball) =>
+            connection.On<int, int[], int[], int[]> ("PartieJoined", async (id, player1, player2, ball) =>
             {
                 partie = CreatePartie(id, player1, player2, ball);
 
@@ -42,11 +42,13 @@ namespace PongClient
                     partie.player2 = new Player(100, 635, 100, 30);
                     idPlayer = 2;
                 }
+
+                await UpdatePartie();
             });
 
             connection.On<int[], int[], int[]>("PartieRefresh", (player1, player2, ball) =>
             {
-                Debug.WriteLine("PartieRefresh");
+                if (partie == null) return;
 
                 if (player1 != null)
                 {
@@ -103,21 +105,20 @@ namespace PongClient
             } 
             else
             {
-                await UpdatePartie();
-                await connection.SendAsync("GetPartie", partie.Id);
+                //await connection.SendAsync("GetPartie", partie.Id);
             }
-
-            //Debug.WriteLine(partie.Id);
 
             if(idPlayer == 1)
             {
                 if (left)
                 {
                     partie.player1.MoveLeft(10);
+                    await UpdatePartie();
                 }
                 else if (right)
                 {
                     partie.player1.MoveRight(10, pb.Width);
+                    await UpdatePartie();
                 }
             }
             else if (idPlayer == 2)
@@ -125,10 +126,12 @@ namespace PongClient
                 if (left)
                 {
                     partie.player2.MoveLeft(10);
+                    await UpdatePartie();
                 }
                 else if (right)
                 {
                     partie.player2.MoveRight(10, pb.Width);
+                    await UpdatePartie();
                 }
             }
 
@@ -163,17 +166,13 @@ namespace PongClient
 
         private void pb_Paint(object sender, PaintEventArgs e)
         {
-            if (partie == null)
-                return;
+            if (partie == null) return;
 
-            if (partie.player1 != null)
-                partie.player1.Draw(e.Graphics);
+            if (partie.player1 != null) partie.player1.Draw(e.Graphics);
 
-            if (partie.player2 != null)
-                partie.player2.Draw(e.Graphics);
+            if (partie.player2 != null) partie.player2.Draw(e.Graphics);
 
-            if (partie.ball != null)
-                partie.ball.Draw(e.Graphics);
+            if (partie.ball != null) partie.ball.Draw(e.Graphics);
         }
 
         private Partie CreatePartie(int id, int[] player1, int[] player2, int[] ball)

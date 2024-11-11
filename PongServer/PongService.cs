@@ -1,12 +1,31 @@
-﻿using PongLibrary;
+﻿using System.Timers;
+using Microsoft.AspNetCore.SignalR;
+using PongLibrary;
 
 namespace PongServer
 {
     public class PongService
     {
+        private readonly IHubContext<PongHub> hub;
+        private readonly System.Timers.Timer timer;
+
         private Dictionary<int, Partie> Parties = new Dictionary<int, Partie>();
 
         private int id = 0;
+
+        public PongService(IHubContext<PongHub> hub)
+        {
+            this.hub = hub;
+
+            timer = new System.Timers.Timer(1000 / 60);
+            timer.Elapsed += Tick;
+            timer.Start();
+        }
+
+        private void Tick(object sender, ElapsedEventArgs e)
+        {
+
+        }
 
         private int NextId()
         {
