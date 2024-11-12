@@ -18,9 +18,11 @@ namespace PongClient
         {
             InitializeComponent();
 
-            this.ClientSize = new Size(650, 700);
+            JoinBTN.Location = new Point(pb.Width / 2 - JoinBTN.Width / 2, 400);
+            HostBTN.Location = new Point(pb.Width / 2 - HostBTN.Width / 2, JoinBTN.Location.Y + 40);
+            JoinInput.Location = new Point(pb.Width / 2 - JoinInput.Width / 2, JoinBTN.Location.Y - 30);
 
-            //StartServerConnection("localhost");
+            this.ClientSize = new Size(650, 700);
         }
 
         private async void tmr_Tick(object sender, EventArgs e)
@@ -81,6 +83,10 @@ namespace PongClient
                 JoinBTN.Visible = true;
                 HostBTN.Visible = true;
 
+                JoinInput.Enabled = true;
+                JoinBTN.Enabled = true;
+                HostBTN.Enabled = true;
+
                 Refresh();
             }
         }
@@ -99,7 +105,22 @@ namespace PongClient
 
         private void pb_Paint(object sender, PaintEventArgs e)
         {
-            if (partie == null) return;
+            if (partie == null)
+            {
+                Font arial60 = new Font("Arial", 60);
+
+                string texte = "Pong";
+                SizeF sz = e.Graphics.MeasureString(texte, arial60);
+
+                e.Graphics.DrawString(
+                    texte,
+                    arial60,
+                    Brushes.White,
+                    new PointF((pb.Width - sz.Width) / 2, 200)
+                );
+
+                return;
+            }
 
             if (partie.player1 != null) partie.player1.Draw(e.Graphics);
 
@@ -121,8 +142,28 @@ namespace PongClient
 
             connection.Closed += async (error) =>
             {
-                await Task.Delay(new Random().Next(0, 5) * 1000);
-                await connection.StartAsync();
+                //await Task.Delay(new Random().Next(0, 5) * 1000);
+                //await connection.StartAsync();
+
+                if (partie == null)
+                {
+                    return;
+                }
+
+                await connection.DisposeAsync();
+                await server.StopServerAsync();
+
+                partie = null;
+
+                JoinInput.Visible = true;
+                JoinBTN.Visible = true;
+                HostBTN.Visible = true;
+
+                JoinInput.Enabled = true;
+                JoinBTN.Enabled = true;
+                HostBTN.Enabled = true;
+
+                Refresh();
             };
 
             connection.On<int, int[], int[], int[]>("PartieJoined", async (id, player1, player2, ball) =>
@@ -152,7 +193,7 @@ namespace PongClient
 
                 if (player1 != null)
                 {
-                    if (player1 == null)
+                    if (partie.player1 == null)
                     {
                         partie.player1 = new Player(player1[0], player1[1], player1[2], player1[3]);
                     }
@@ -162,6 +203,7 @@ namespace PongClient
                         partie.player1.Y = player1[1];
                         partie.player1.Width = player1[2];
                         partie.player1.Height = player1[3];
+                        partie.player1.Score = player1[4];
                     }
                 }
 
@@ -177,6 +219,7 @@ namespace PongClient
                         partie.player2.Y = player2[1];
                         partie.player2.Width = player2[2];
                         partie.player2.Height = player2[3];
+                        partie.player2.Score = player2[4];
                     }
                 }
             });
@@ -195,6 +238,29 @@ namespace PongClient
                 partie.ball.Vy = ball[4];
             });
 
+            connection.On("PartieDeleted", async () =>
+            {
+                if (partie == null)
+                {
+                    return;
+                }
+
+                await connection.DisposeAsync();
+                await server.StopServerAsync();
+
+                partie = null;
+
+                JoinInput.Visible = true;
+                JoinBTN.Visible = true;
+                HostBTN.Visible = true;
+
+                JoinInput.Enabled = true;
+                JoinBTN.Enabled = true;
+                HostBTN.Enabled = true;
+
+                Refresh();
+            });
+
             connection.StartAsync();
         }
 
@@ -204,11 +270,11 @@ namespace PongClient
 
             if (player1 != null)
             {
-                p.player1 = new Player(player1[0], player1[1], player1[2], player1[3]);
+                p.player1 = new Player(player1[0], player1[1], player1[2], player1[3], player1[4]);
             }
             if (player2 != null)
             {
-                p.player2 = new Player(player2[0], player2[1], player2[2], player2[3]);
+                p.player2 = new Player(player2[0], player2[1], player2[2], player2[3], player2[4]);
             }
 
             p.ball = new Ball(ball[0], ball[1], ball[2], ball[3], ball[4]);
@@ -223,12 +289,12 @@ namespace PongClient
 
             if (idPlayer == 1 && partie.player1 != null)
             {
-                player1 = new int[] { partie.player1.X, partie.player1.Y, partie.player1.Width, partie.player1.Height };
+                player1 = new int[] { partie.player1.X, partie.player1.Y, partie.player1.Width, partie.player1.Height, partie.player1.Score };
             }
 
             else if (idPlayer == 2 && partie.player2 != null)
             {
-                player2 = new int[] { partie.player2.X, partie.player2.Y, partie.player2.Width, partie.player2.Height };
+                player2 = new int[] { partie.player2.X, partie.player2.Y, partie.player2.Width, partie.player2.Height, partie.player2.Score };
             }
 
             await connection.SendAsync("UpdatePartie", partie.Id, player1, player2);
@@ -242,6 +308,10 @@ namespace PongClient
             JoinBTN.Visible = false;
             HostBTN.Visible = false;
 
+            JoinInput.Enabled = false;
+            JoinBTN.Enabled = false;
+            HostBTN.Enabled = false;
+
             StartServerConnection("localhost");
         }
 
@@ -252,6 +322,10 @@ namespace PongClient
             JoinInput.Visible = false;
             JoinBTN.Visible = false;
             HostBTN.Visible = false;
+
+            JoinInput.Enabled = false;
+            JoinBTN.Enabled = false;
+            HostBTN.Enabled = false;
 
             StartServerConnection(JoinInput.Text);
         }

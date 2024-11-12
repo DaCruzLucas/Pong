@@ -2,26 +2,27 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace PongClient
 {
     internal class Server
     {
         private Task _serverTask;
-        private WebApplication _host;
+        private WebApplication app;
 
         public void StartServer()
         {
             _serverTask = Task.Run(() =>
             {
                 var builder = WebApplication.CreateBuilder();
+                builder.WebHost.UseUrls("http://0.0.0.0:5000");
                 builder.Services.AddSignalR();
                 builder.Services.AddSingleton<PongService>();
 
-                _host = builder.Build();
-                _host.MapHub<PongHub>("/pong");
-
-                _host.Run();
+                app = builder.Build();
+                app.MapHub<PongHub>("/pong");
+                app.Run();
             });
         }
 
@@ -33,11 +34,11 @@ namespace PongClient
             //    await _serverTask;
             //}
 
-            if (_host != null)
+            if (app != null)
             {
                 //await _host.StopAsync();
-                await _host.DisposeAsync();
-                _host = null;
+                await app.DisposeAsync();
+                app = null;
                 _serverTask = null;
             }
         }

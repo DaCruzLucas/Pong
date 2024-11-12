@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Threading.Tasks.Sources;
 
 namespace PongLibrary
 {
@@ -8,12 +9,16 @@ namespace PongLibrary
         public int Y { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public Player(int x, int y, int w, int h)
+        public int Score { get; set; }
+        public string ConnectionId { get; set; }
+
+        public Player(int x, int y, int w, int h, int score = 0)
         {
             this.X = x;
             this.Y = y;
             this.Width = w;
             this.Height = h;
+            this.Score = score;
         }
 
         public void MoveLeft(int v)

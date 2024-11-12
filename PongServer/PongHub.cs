@@ -25,12 +25,12 @@ namespace PongServer
 
             if (partie.player1 != null)
             {
-                player1 = new int[] { partie.player1.X, partie.player1.Y, partie.player1.Width, partie.player1.Height };
+                player1 = new int[] { partie.player1.X, partie.player1.Y, partie.player1.Width, partie.player1.Height, partie.player1.Score };
             }
 
             if (partie.player2 != null)
             {
-                player2 = new int[] { partie.player2.X, partie.player2.Y, partie.player2.Width, partie.player2.Height };
+                player2 = new int[] { partie.player2.X, partie.player2.Y, partie.player2.Width, partie.player2.Height, partie.player2.Score };
             }
             
             int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
@@ -40,13 +40,27 @@ namespace PongServer
             await base.OnConnectedAsync();
         }
 
-        public override async Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            //// Retirer le joueur de la partie et notifier les autres joueurs
-            //int partieId = ps.RemovePlayerFromPartie(Context.ConnectionId);
-            //await Clients.Group(partieId.ToString()).SendAsync("PlayerDisconnected", Context.ConnectionId);
-                
-            //Console.WriteLine($"Connection {Context.ConnectionId} left partie {partieId}");
+            if (ps.GetHostId() == Context.ConnectionId)
+            {
+                await Clients.All.SendAsync("PartieDeleted");
+            }
+            else
+            {
+                int partieId = ps.RemovePlayerFromPartie(Context.ConnectionId);
+
+                Partie partie = ps.GetPartie(partieId);
+
+                if (partie != null)
+                {
+                    ps.RemovePartie(partieId);
+
+                    await Clients.GroupExcept(partieId.ToString(), Context.ConnectionId).SendAsync("PartieDeleted");
+                }
+
+                Console.WriteLine($"Partie {partieId} was deleted");
+            }
 
             await base.OnDisconnectedAsync(exception);
         }
@@ -55,7 +69,7 @@ namespace PongServer
         {
             //Console.WriteLine($"Connection {Context.ConnectionId} updated partie {id}")
 
-            ps.UpdatePartie(id, player1, player2);
+            ps.UpdatePartie(id, player1, player2, Context.ConnectionId);
 
             await Clients.GroupExcept(id.ToString(), Context.ConnectionId).SendAsync("PartieRefresh", player1, player2);
         }
@@ -63,6 +77,11 @@ namespace PongServer
         public async Task UpdatePartieBall(int id, int[] ball)
         {
             await Clients.Group(id.ToString()).SendAsync("PartieRefreshBall", ball);
+        }
+
+        public async Task SendHostId(string id)
+        {
+            ps.SetHostId(id);
         }
 
         public async Task GetPartie(int id)
@@ -74,12 +93,12 @@ namespace PongServer
 
             if (partie.player1 != null)
             {
-                player1 = new int[] { partie.player1.X, partie.player1.Y, partie.player1.Width, partie.player1.Height };
+                player1 = new int[] { partie.player1.X, partie.player1.Y, partie.player1.Width, partie.player1.Height, partie.player1.Score };
             }
 
             if (partie.player2 != null)
             {
-                player2 = new int[] { partie.player2.X, partie.player2.Y, partie.player2.Width, partie.player2.Height };
+                player2 = new int[] { partie.player2.X, partie.player2.Y, partie.player2.Width, partie.player2.Height, partie.player2.Score };
             }
 
             int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };

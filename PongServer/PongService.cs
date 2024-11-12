@@ -10,6 +10,7 @@ namespace PongServer
         private readonly System.Timers.Timer timer = new System.Timers.Timer(20);
 
         private Dictionary<int, Partie> Parties = new Dictionary<int, Partie>();
+        private string HostId;
 
         private int id = 0;
 
@@ -86,7 +87,7 @@ namespace PongServer
                 }
 
                 int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
-
+                
                 await hub.Clients.Group(partie.Id.ToString()).SendAsync("PartieRefreshBall", ball);
             }
         }
@@ -103,13 +104,14 @@ namespace PongServer
             return partie;
         }
 
-        public void UpdatePartie(int id, int[] player1, int[] player2)
+        public void UpdatePartie(int id, int[] player1, int[] player2, string connectionId)
         {
             if (player1 != null)
             {
                 if (Parties[id].player1 == null)
                 {
-                    Parties[id].player1 = new Player(player1[0], player1[1], player1[2], player1[3]);
+                    Parties[id].player1 = new Player(player1[0], player1[1], player1[2], player1[3], player1[4]);
+                    Parties[id].player1.ConnectionId = connectionId;
                 }
                 else
                 {
@@ -117,6 +119,7 @@ namespace PongServer
                     Parties[id].player1.Y = player1[1];
                     Parties[id].player1.Width = player1[2];
                     Parties[id].player1.Height = player1[3];
+                    Parties[id].player1.Score = player1[4];
                 }
             }
 
@@ -124,7 +127,8 @@ namespace PongServer
             {
                 if (Parties[id].player2 == null)
                 {
-                    Parties[id].player2 = new Player(player2[0], player2[1], player2[2], player2[3]);
+                    Parties[id].player2 = new Player(player2[0], player2[1], player2[2], player2[3], player2[4]);
+                    Parties[id].player2.ConnectionId = connectionId;
                 }
                 else
                 {
@@ -132,6 +136,7 @@ namespace PongServer
                     Parties[id].player2.Y = player2[1];
                     Parties[id].player2.Width = player2[2];
                     Parties[id].player2.Height = player2[3];
+                    Parties[id].player2.Score = player2[4];
                 }
             }
         }
@@ -148,8 +153,10 @@ namespace PongServer
 
         public Partie FindParty()
         {
-            foreach (Partie partie in Parties.Values)
+            for (int i = 0; i < Parties.Values.Count; i++)
             {
+                Partie partie = Parties.Values.ElementAt(i);
+
                 if (partie.player1 == null || partie.player2 == null)
                 {
                     return partie;
@@ -157,6 +164,43 @@ namespace PongServer
             }
 
             return CreatePartie();
+        }
+
+        public int RemovePlayerFromPartie(string connectionId)
+        {
+            for (int i = 0; i < Parties.Values.Count; i++)
+            {
+                Partie partie = Parties.Values.ElementAt(i);
+
+                if (partie.player1 != null && partie.player1.ConnectionId == connectionId)
+                {
+                    partie.player1 = null;
+                    return partie.Id;
+                }
+
+                if (partie.player2 != null && partie.player2.ConnectionId == connectionId)
+                {
+                    partie.player2 = null;
+                    return partie.Id;
+                }
+            }
+
+            return -1;
+        }
+
+        public void SetHostId(string id)
+        {
+            HostId = id;
+        }
+
+        public string GetHostId()
+        {
+            return HostId;
+        }
+
+        public void RemovePartie(int partieId)
+        {
+            Parties.Remove(partieId);
         }
     }
 }
