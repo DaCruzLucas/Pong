@@ -245,20 +245,22 @@ namespace PongClient
                     return;
                 }
 
-                await connection.DisposeAsync();
-                //await server.StopServerAsync();
-
                 partie = null;
 
-                JoinInput.Visible = true;
-                JoinBTN.Visible = true;
-                HostBTN.Visible = true;
+                Invoke(new Action( () =>
+                {
+                    JoinInput.Visible = true;
+                    JoinBTN.Visible = true;
+                    HostBTN.Visible = true;
 
-                JoinInput.Enabled = true;
-                JoinBTN.Enabled = true;
-                HostBTN.Enabled = true;
+                    JoinInput.Enabled = true;
+                    JoinBTN.Enabled = true;
+                    HostBTN.Enabled = true;
 
-                Refresh();
+                    Refresh();
+                }));
+
+                await connection.DisposeAsync();
             });
 
             connection.StartAsync();
