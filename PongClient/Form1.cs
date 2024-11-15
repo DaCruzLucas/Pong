@@ -6,7 +6,7 @@ namespace PongClient
 {
     public partial class Form1 : Form
     {
-        private Server server = new Server();
+        //private Server server = new Server();
         private HubConnection connection;
         private Partie partie;
 
