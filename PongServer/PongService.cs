@@ -78,7 +78,7 @@ namespace PongServer
             int vx = rnd.Next(0, 2) == 0 ? -1 : 1;
             partie.ball.Respawn(x, y, vx, vy);
 
-            await hub.Clients.Group(partie.Id.ToString()).SendAsync("PartieRefreshBall", partie.player1.Score, partie.player2.Score);
+            await hub.Clients.Group(partie.Id.ToString()).SendAsync("PartieRefreshScore", partie.player1.Score, partie.player2.Score);
         }
 
         private void Collide(Partie partie, Player player)
