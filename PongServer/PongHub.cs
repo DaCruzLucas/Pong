@@ -42,22 +42,15 @@ namespace PongServer
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            if (ps.GetHostId() == Context.ConnectionId)
+            int partieId = ps.RemovePlayerFromPartie(Context.ConnectionId);
+
+            Partie partie = ps.GetPartie(partieId);
+
+            if (partie != null)
             {
-                await Clients.All.SendAsync("PartieDeleted");
-            }
-            else
-            {
-                int partieId = ps.RemovePlayerFromPartie(Context.ConnectionId);
+                await Clients.GroupExcept(partieId.ToString(), Context.ConnectionId).SendAsync("PartieDeleted");
 
-                Partie partie = ps.GetPartie(partieId);
-
-                if (partie != null)
-                {
-                    ps.RemovePartie(partieId);
-
-                    await Clients.GroupExcept(partieId.ToString(), Context.ConnectionId).SendAsync("PartieDeleted");
-                }
+                ps.RemovePartie(partieId);
 
                 Console.WriteLine($"Partie {partieId} was deleted");
             }
@@ -77,11 +70,6 @@ namespace PongServer
         public async Task UpdatePartieBall(int id, int[] ball)
         {
             await Clients.Group(id.ToString()).SendAsync("PartieRefreshBall", ball);
-        }
-
-        public async Task SendHostId(string id)
-        {
-            ps.SetHostId(id);
         }
 
         public async Task GetPartie(int id)

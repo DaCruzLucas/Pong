@@ -181,7 +181,7 @@ namespace PongServer
 
         public Partie GetPartie(int id)
         {
-            return Parties[id];
+            return Parties.ContainsKey(id) ? Parties[id] : null;
         }
 
         public Partie FindParty()

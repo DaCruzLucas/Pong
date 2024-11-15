@@ -75,7 +75,7 @@ namespace PongClient
             else if (e.KeyCode== Keys.Escape)
             {
                 await connection.DisposeAsync();
-                await server.StopServerAsync();
+                //await server.StopServerAsync();
 
                 partie = null;
 
@@ -151,7 +151,7 @@ namespace PongClient
                 }
 
                 await connection.DisposeAsync();
-                await server.StopServerAsync();
+                //await server.StopServerAsync();
 
                 partie = null;
 
@@ -246,7 +246,7 @@ namespace PongClient
                 }
 
                 await connection.DisposeAsync();
-                await server.StopServerAsync();
+                //await server.StopServerAsync();
 
                 partie = null;
 
@@ -302,7 +302,7 @@ namespace PongClient
 
         private void HostBTN_Click(object sender, EventArgs e)
         {
-            server.StartServer();
+            //server.StartServer();
 
             JoinInput.Visible = false;
             JoinBTN.Visible = false;
@@ -317,7 +317,7 @@ namespace PongClient
 
         private async void JoinBTN_Click(object sender, EventArgs e)
         {
-            await server.StopServerAsync();
+            //await server.StopServerAsync();
 
             JoinInput.Visible = false;
             JoinBTN.Visible = false;
