@@ -49,7 +49,7 @@ namespace PongServer
 
         private void Collide(Partie partie, Player player)
         {
-            int collision = partie.ball.Collide(partie.player1);
+            int collision = partie.ball.Collide(player);
 
             if (collision == 1)
             {
