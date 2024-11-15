@@ -69,27 +69,27 @@ namespace PongLibrary
 
                     if (this.X < p.X + section) // Très à gauche
                     {
-                        Console.WriteLine("Très à gauche");
+                        //Console.WriteLine("Très à gauche");
                         return 21; // 21 pour bas très à gauche
                     }
                     else if (this.X < p.X + 2 * section) // Gauche
                     {
-                        Console.WriteLine("Gauche");
+                        //Console.WriteLine("Gauche");
                         return 22; // 22 pour bas gauche
                     }
                     else if (this.X < p.X + 3 * section) // Milieu
                     {
-                        Console.WriteLine("Milieu");
+                        //Console.WriteLine("Milieu");
                         return 23; // 23 pour bas milieu
                     }
                     else if (this.X < p.X + 4 * section) // Droite
                     {
-                        Console.WriteLine("Droite");
+                        //Console.WriteLine("Droite");
                         return 24; // 24 pour bas droite
                     }
                     else // Très à droite
                     {
-                        Console.WriteLine("Très à droite");
+                        //Console.WriteLine("Très à droite");
                         return 25; // 25 pour bas très à droite
                     }
                 }

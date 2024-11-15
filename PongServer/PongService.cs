@@ -62,7 +62,7 @@ namespace PongServer
                 if (partie.ball.Vx >= -8)
                 {
                     partie.ball.Vx -= 5;
-                    Console.WriteLine("très à gauche -5");
+                    //Console.WriteLine("très à gauche -5");
                 }
                 partie.ball.Vy = -partie.ball.Vy;
                 partie.ball.Y = player.Y + player.Height + 1;
@@ -72,7 +72,7 @@ namespace PongServer
                 if (partie.ball.Vx >= -8)
                 {
                     partie.ball.Vx -= 3;
-                    Console.WriteLine("gauche -3");
+                    //Console.WriteLine("gauche -3");
                 }
                 partie.ball.Vy = -partie.ball.Vy;
                 partie.ball.Y = player.Y + player.Height + 1;
@@ -82,12 +82,12 @@ namespace PongServer
                 if (partie.ball.Vx <= -3)
                 {
                     partie.ball.Vx += 4;
-                    Console.WriteLine("millieu +4");
+                   // Console.WriteLine("millieu +4");
                 }
                 else if (partie.ball.Vx >= 3)
                 {
                     partie.ball.Vx -= 4;
-                    Console.WriteLine("millieu -4");
+                    //Console.WriteLine("millieu -4");
                 }
                 partie.ball.Vy = -partie.ball.Vy;
                 partie.ball.Y = player.Y + player.Height + 1;
@@ -97,7 +97,7 @@ namespace PongServer
                 if (partie.ball.Vx <= 8)
                 {
                     partie.ball.Vx += 3;
-                    Console.WriteLine("droite +3");
+                    //Console.WriteLine("droite +3");
                 }
                 partie.ball.Vy = -partie.ball.Vy;
                 partie.ball.Y = player.Y + player.Height + 1;
@@ -107,7 +107,7 @@ namespace PongServer
                 if (partie.ball.Vx <= -8)
                 {
                     partie.ball.Vx += 5;
-                    Console.WriteLine("très à droite +5");
+                    //Console.WriteLine("très à droite +5");
                 }
                 partie.ball.Vy = -partie.ball.Vy;
                 partie.ball.Y = player.Y + player.Height + 1;
