@@ -33,62 +33,95 @@ namespace PongServer
 
                 if (partie.player1 != null)
                 {
-                    int collision = partie.ball.Collide(partie.player1);
-
-                    if (collision == 1)
-                    {
-                        partie.ball.Vy = -partie.ball.Vy;
-                        partie.ball.Y = partie.player1.Y - partie.ball.D - 1;
-                    }
-                    else if (collision == 2)
-                    {
-                        partie.ball.Vy = -partie.ball.Vy;
-                        partie.ball.Y = partie.player1.Y + partie.player1.Height + 1;
-                    }
-                    else if (collision == 3)
-                    {
-                        partie.ball.Vx = -partie.ball.Vx;
-                        partie.ball.X = partie.player1.X - partie.ball.D - 1;
-                    }
-                    else if (collision == 4)
-                    {
-                        partie.ball.Vx = -partie.ball.Vx;
-                        partie.ball.X = partie.player1.X + partie.player1.Width + 1;
-                    }
+                    Collide(partie, partie.player1);
                 }
 
                 if (partie.player2 != null)
                 {
-                    int collision = partie.ball.Collide(partie.player2);
-
-                    if (partie.player2 != null)
-                    {
-                        if (collision == 1)
-                        {
-                            partie.ball.Vy = -partie.ball.Vy;
-                            partie.ball.Y = partie.player2.Y - partie.ball.D - 1;
-                        }
-                        else if (collision == 2)
-                        {
-                            partie.ball.Vy = -partie.ball.Vy;
-                            partie.ball.Y = partie.player2.Y + partie.player2.Height + 1;
-                        }
-                        else if (collision == 3)
-                        {
-                            partie.ball.Vx = -partie.ball.Vx;
-                            partie.ball.X = partie.player2.X - partie.ball.D - 1;
-                        }
-                        else if (collision == 4)
-                        {
-                            partie.ball.Vx = -partie.ball.Vx;
-                            partie.ball.X = partie.player2.X + partie.player2.Width + 1;
-                        }
-                    }
+                    Collide(partie, partie.player2);
                 }
 
                 int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
                 
                 await hub.Clients.Group(partie.Id.ToString()).SendAsync("PartieRefreshBall", ball);
+            }
+        }
+
+        private void Collide(Partie partie, Player player)
+        {
+            int collision = partie.ball.Collide(partie.player1);
+
+            if (collision == 1)
+            {
+                partie.ball.Vy = -partie.ball.Vy;
+                partie.ball.Y = player.Y - partie.ball.D - 1;
+            }
+
+            else if (collision == 21) // très à gauche
+            {
+                if (partie.ball.Vx >= -8)
+                {
+                    partie.ball.Vx -= 5;
+                    Console.WriteLine("très à gauche -5");
+                }
+                partie.ball.Vy = -partie.ball.Vy;
+                partie.ball.Y = player.Y + player.Height + 1;
+            }
+            else if (collision == 22) // gauche
+            {
+                if (partie.ball.Vx >= -8)
+                {
+                    partie.ball.Vx -= 3;
+                    Console.WriteLine("gauche -3");
+                }
+                partie.ball.Vy = -partie.ball.Vy;
+                partie.ball.Y = player.Y + player.Height + 1;
+            }
+            else if (collision == 23) // millieu
+            {
+                if (partie.ball.Vx <= -3)
+                {
+                    partie.ball.Vx += 4;
+                    Console.WriteLine("millieu +4");
+                }
+                else if (partie.ball.Vx >= 3)
+                {
+                    partie.ball.Vx -= 4;
+                    Console.WriteLine("millieu -4");
+                }
+                partie.ball.Vy = -partie.ball.Vy;
+                partie.ball.Y = player.Y + player.Height + 1;
+            }
+            else if (collision == 24) // droite
+            {
+                if (partie.ball.Vx <= 8)
+                {
+                    partie.ball.Vx += 3;
+                    Console.WriteLine("droite +3");
+                }
+                partie.ball.Vy = -partie.ball.Vy;
+                partie.ball.Y = player.Y + player.Height + 1;
+            }
+            else if (collision == 25) // très à droite
+            {
+                if (partie.ball.Vx <= -8)
+                {
+                    partie.ball.Vx += 5;
+                    Console.WriteLine("très à droite +5");
+                }
+                partie.ball.Vy = -partie.ball.Vy;
+                partie.ball.Y = player.Y + player.Height + 1;
+            }
+
+            else if (collision == 3)
+            {
+                partie.ball.Vx = -partie.ball.Vx;
+                partie.ball.X = player.X - partie.ball.D - 1;
+            }
+            else if (collision == 4)
+            {
+                partie.ball.Vx = -partie.ball.Vx;
+                partie.ball.X = player.X + player.Width + 1;
             }
         }
 
