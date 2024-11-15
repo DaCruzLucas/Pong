@@ -49,7 +49,7 @@ namespace PongServer
                         vx = 8;
                     }
 
-                    partie.ball.Respawn(325, 350, 30, vx, 7);
+                    partie.ball.Respawn(325, 350, vx, 8);
                 }
                 else if (partie.ball.Y >= 690 && partie.player1 != null && partie.player2 != null)
                 {
@@ -66,7 +66,7 @@ namespace PongServer
                         vx = 8;
                     }
 
-                    partie.ball.Respawn(325, 350, 30, vx, -7);
+                    partie.ball.Respawn(325, 350, vx, -8);
                 }
                 else
                 {

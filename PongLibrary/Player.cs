@@ -12,7 +12,16 @@ namespace PongLibrary
         public int Score { get; set; }
         public string ConnectionId { get; set; }
 
-        public Player(int x, int y, int w, int h, int score = 0)
+        public Player(int x, int y)
+        {
+            this.X = x;
+            this.Y = y;
+            this.Width = 120;
+            this.Height = 20;
+            this.Score = 0;
+        }
+
+        public Player(int x, int y, int w, int h, int score = 0) // NE PAS TOUCHE ICI
         {
             this.X = x;
             this.Y = y;

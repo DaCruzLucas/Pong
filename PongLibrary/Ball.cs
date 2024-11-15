@@ -10,20 +10,29 @@ namespace PongLibrary
         public int Vx { get; set; }
         public int Vy { get; set; }
 
-        public Ball(int x, int y, int d, int vx, int vy)
+        public Ball(int x, int y)
         {
             this.X = x;
             this.Y = y;
-            this.D = d;
-            this.Vx = vx;
-            this.Vy = vx;
+            this.D = 23;
+            this.Vx = 10;
+            this.Vy = 8;
         }
 
-        public void Respawn(int x, int y,int d, int vx, int vy)
+        public Ball(int x, int y, int d, int Vx, int Vy) // NE PAS TOUCHER ICI
         {
             this.X = x;
             this.Y = y;
             this.D = d;
+            this.Vx = Vx;
+            this.Vy = Vy;
+        }
+
+        public void Respawn(int x, int y, int vx, int vy)
+        {
+            this.X = x;
+            this.Y = y;
+            D = 23;
             this.Vx = vx;
             this.Vy = vy;
         }

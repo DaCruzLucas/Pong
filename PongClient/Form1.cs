@@ -172,12 +172,12 @@ namespace PongClient
 
                 if (partie.player1 == null)
                 {
-                    partie.player1 = new Player(100, 30, 120, 20);
+                    partie.player1 = new Player(100, 30);
                     idPlayer = 1;
                 }
                 else if (partie.player2 == null)
                 {
-                    partie.player2 = new Player(100, 635, 120, 20);
+                    partie.player2 = new Player(100, 635);
                     idPlayer = 2;
                 }
 

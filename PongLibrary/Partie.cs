@@ -14,7 +14,7 @@ namespace PongLibrary
         public Partie(int id)
         {
             Id = id;
-            ball = new Ball(250, 250, 23, 10, 7);
+            ball = new Ball(250, 250);
         }
     }
 }
