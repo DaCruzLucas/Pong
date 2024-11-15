@@ -14,6 +14,8 @@ namespace PongClient
         private bool left = false;
         private bool right = false;
 
+        Font arial60 = new Font("Arial", 60);
+
         public Form1()
         {
             InitializeComponent();
@@ -107,8 +109,6 @@ namespace PongClient
         {
             if (partie == null)
             {
-                Font arial60 = new Font("Arial", 60);
-
                 string texte = "Pong";
                 SizeF sz = e.Graphics.MeasureString(texte, arial60);
 
@@ -122,9 +122,35 @@ namespace PongClient
                 return;
             }
 
-            if (partie.player1 != null) partie.player1.Draw(e.Graphics, Properties.Resources.plateforme);
+            if (partie.player1 != null)
+            {
+                partie.player1.Draw(e.Graphics, Properties.Resources.plateforme);
 
-            if (partie.player2 != null) partie.player2.Draw(e.Graphics, Properties.Resources.plateforme2);
+                string texte = partie.player1.Score.ToString();
+                SizeF sz = e.Graphics.MeasureString(texte, arial60);
+
+                e.Graphics.DrawString(
+                    texte,
+                    arial60,
+                    Brushes.Black,
+                    new PointF((pb.Width - sz.Width) / 2, 100)
+                );
+            }
+
+            if (partie.player2 != null)
+            {
+                partie.player2.Draw(e.Graphics, Properties.Resources.plateforme2);
+
+                string texte = partie.player2.Score.ToString();
+                SizeF sz = e.Graphics.MeasureString(texte, arial60);
+
+                e.Graphics.DrawString(
+                    texte,
+                    arial60,
+                    Brushes.Black,
+                    new PointF((pb.Width - sz.Width) / 2, 500)
+                );
+            }
 
             if (partie.ball != null) partie.ball.Draw(e.Graphics);
         }
@@ -238,6 +264,17 @@ namespace PongClient
                 partie.ball.Vy = ball[4];
             });
 
+            connection.On<int, int>("PartieRefreshScore", (score1, score2) =>
+            {
+                if (partie == null)
+                {
+                    return;
+                }
+
+                partie.player1.Score = score1;
+                partie.player2.Score = score2;
+            });
+
             connection.On("PartieDeleted", async () =>
             {
                 if (partie == null)
@@ -286,20 +323,27 @@ namespace PongClient
 
         private async Task UpdatePartie()
         {
-            int[] player1 = null;
-            int[] player2 = null;
-
-            if (idPlayer == 1 && partie.player1 != null)
+            try
             {
-                player1 = new int[] { partie.player1.X, partie.player1.Y, partie.player1.Width, partie.player1.Height, partie.player1.Score };
-            }
+                int[] player1 = null;
+                int[] player2 = null;
 
-            else if (idPlayer == 2 && partie.player2 != null)
+                if (idPlayer == 1 && partie.player1 != null)
+                {
+                    player1 = new int[] { partie.player1.X, partie.player1.Y, partie.player1.Width, partie.player1.Height, partie.player1.Score };
+                }
+
+                else if (idPlayer == 2 && partie.player2 != null)
+                {
+                    player2 = new int[] { partie.player2.X, partie.player2.Y, partie.player2.Width, partie.player2.Height, partie.player2.Score };
+                }
+
+                await connection.SendAsync("UpdatePartie", partie.Id, player1, player2);
+            }
+            catch (Exception e)
             {
-                player2 = new int[] { partie.player2.X, partie.player2.Y, partie.player2.Width, partie.player2.Height, partie.player2.Score };
+                Debug.WriteLine(e.Message);
             }
-
-            await connection.SendAsync("UpdatePartie", partie.Id, player1, player2);
         }
 
         private void HostBTN_Click(object sender, EventArgs e)
@@ -317,7 +361,7 @@ namespace PongClient
             StartServerConnection("localhost");
         }
 
-        private async void JoinBTN_Click(object sender, EventArgs e)
+        private void JoinBTN_Click(object sender, EventArgs e)
         {
             //await server.StopServerAsync();
 

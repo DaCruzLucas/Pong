@@ -1,4 +1,5 @@
-﻿using System.Timers;
+﻿using System.Linq.Expressions;
+using System.Timers;
 using Microsoft.AspNetCore.SignalR;
 using PongLibrary;
 
@@ -26,65 +27,58 @@ namespace PongServer
 
         private async void Tick(object sender, ElapsedEventArgs e)
         {
-            var partiesCopy = Parties.Values.ToList();
-
-            for (int i = 0; i < Parties.Values.Count; i++)
+            try
             {
-                Partie partie = partiesCopy[i];
-
-                partie.ball.Update(650, 700);
-                
-                if (partie.ball.Y <= 1 && partie.player1 != null && partie.player2 != null)
+                for (int i = 0; i < Parties.Values.Count; i++)
                 {
-                    partie.player2.Score++;
+                    Partie partie = Parties.Values.ElementAt(i);
 
-                    int vx = rnd.Next(0,2);
+                    partie.ball.Update(650, 700);
 
-                    if (vx == 0)
+                    if (partie.ball.Y <= 0 && partie.player1 != null && partie.player2 != null)
                     {
-                        vx = -8;
+                        partie.player2.Score++;
+
+                        await RespawnBall(partie, 325, 100, 8);
+                    }
+                    else if (partie.ball.Y >= 675 && partie.player1 != null && partie.player2 != null)
+                    {
+                        partie.player1.Score++;
+
+                        await RespawnBall(partie, 325, 600, -8);
                     }
                     else
                     {
-                        vx = 8;
+                        if (partie.player1 != null)
+                        {
+                            Collide(partie, partie.player1);
+                        }
+
+                        if (partie.player2 != null)
+                        {
+                            Collide(partie, partie.player2);
+                        }
                     }
 
-                    partie.ball.Respawn(325, 350, vx, 8);
+                    int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
+
+                    await hub.Clients.Group(partie.Id.ToString()).SendAsync("PartieRefreshBall", ball);
                 }
-                else if (partie.ball.Y >= 690 && partie.player1 != null && partie.player2 != null)
-                {
-                    partie.player1.Score++;
-
-                    int vx = rnd.Next(0, 2);
-
-                    if (vx == 0)
-                    {
-                        vx = -8;
-                    }
-                    else
-                    {
-                        vx = 8;
-                    }
-
-                    partie.ball.Respawn(325, 350, vx, -8);
-                }
-                else
-                {
-                    if (partie.player1 != null)
-                    {
-                        Collide(partie, partie.player1);
-                    }
-
-                    if (partie.player2 != null)
-                    {
-                        Collide(partie, partie.player2);
-                    }
-                }
-
-                int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
-                
-                await hub.Clients.Group(partie.Id.ToString()).SendAsync("PartieRefreshBall", ball);
             }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+                Console.ResetColor();
+            }
+        }
+
+        private async Task RespawnBall(Partie partie, int x, int y, int vy)
+        {
+            int vx = rnd.Next(0, 2) == 0 ? -1 : 1;
+            partie.ball.Respawn(x, y, vx, vy);
+
+            await hub.Clients.Group(partie.Id.ToString()).SendAsync("PartieRefreshBall", partie.player1.Score, partie.player2.Score);
         }
 
         private void Collide(Partie partie, Player player)
@@ -122,7 +116,7 @@ namespace PongServer
                 if (partie.ball.Vx <= -3)
                 {
                     partie.ball.Vx += 4;
-                   // Console.WriteLine("millieu +4");
+                    // Console.WriteLine("millieu +4");
                 }
                 else if (partie.ball.Vx >= 3)
                 {
@@ -183,16 +177,16 @@ namespace PongServer
             {
                 if (Parties[id].player1 == null)
                 {
-                    Parties[id].player1 = new Player(player1[0], player1[1], player1[2], player1[3], player1[4]);
+                    Parties[id].player1 = new Player(player1[0], player1[1], player1[2], player1[3]);
                     Parties[id].player1.ConnectionId = connectionId;
                 }
                 else
                 {
                     Parties[id].player1.X = player1[0];
                     Parties[id].player1.Y = player1[1];
-                    Parties[id].player1.Width = player1[2];
-                    Parties[id].player1.Height = player1[3];
-                    Parties[id].player1.Score = player1[4];
+                    //Parties[id].player1.Width = player1[2];
+                    //Parties[id].player1.Height = player1[3];
+                    //Parties[id].player1.Score = player1[4];
                 }
             }
 
@@ -200,16 +194,16 @@ namespace PongServer
             {
                 if (Parties[id].player2 == null)
                 {
-                    Parties[id].player2 = new Player(player2[0], player2[1], player2[2], player2[3], player2[4]);
+                    Parties[id].player2 = new Player(player2[0], player2[1], player2[2], player2[3]);
                     Parties[id].player2.ConnectionId = connectionId;
                 }
                 else
                 {
                     Parties[id].player2.X = player2[0];
                     Parties[id].player2.Y = player2[1];
-                    Parties[id].player2.Width = player2[2];
-                    Parties[id].player2.Height = player2[3];
-                    Parties[id].player2.Score = player2[4];
+                    //Parties[id].player2.Width = player2[2];
+                    //Parties[id].player2.Height = player2[3];
+                    //Parties[id].player2.Score = player2[4];
                 }
             }
         }
