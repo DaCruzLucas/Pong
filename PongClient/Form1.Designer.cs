@@ -40,6 +40,8 @@
             // pb
             // 
             pb.BackColor = SystemColors.GradientActiveCaption;
+            pb.BackgroundImage = Properties.Resources.BackGround;
+            pb.BackgroundImageLayout = ImageLayout.Stretch;
             pb.Dock = DockStyle.Fill;
             pb.Location = new Point(0, 0);
             pb.Name = "pb";

@@ -45,9 +45,10 @@ namespace PongLibrary
             }
         }
 
-        public void Draw(Graphics g)
+        public void Draw(Graphics g, Image image)
         {
-            g.FillRectangle(Brushes.Blue, this.X, this.Y, Width, Height);
+            g.DrawImage(image, new Rectangle(this.X, this.Y, Width, Height));
+            //g.FillRectangle(Brushes.Blue, this.X, this.Y, Width, Height);
         }
     }
 }

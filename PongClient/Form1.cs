@@ -122,9 +122,9 @@ namespace PongClient
                 return;
             }
 
-            if (partie.player1 != null) partie.player1.Draw(e.Graphics);
+            if (partie.player1 != null) partie.player1.Draw(e.Graphics, Properties.Resources.plateforme);
 
-            if (partie.player2 != null) partie.player2.Draw(e.Graphics);
+            if (partie.player2 != null) partie.player2.Draw(e.Graphics, Properties.Resources.plateforme2);
 
             if (partie.ball != null) partie.ball.Draw(e.Graphics);
         }
@@ -172,12 +172,12 @@ namespace PongClient
 
                 if (partie.player1 == null)
                 {
-                    partie.player1 = new Player(100, 30, 100, 30);
+                    partie.player1 = new Player(100, 30, 120, 20);
                     idPlayer = 1;
                 }
                 else if (partie.player2 == null)
                 {
-                    partie.player2 = new Player(100, 635, 100, 30);
+                    partie.player2 = new Player(100, 635, 120, 20);
                     idPlayer = 2;
                 }
 
