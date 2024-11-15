@@ -14,11 +14,20 @@ namespace PongClient
         private bool left = false;
         private bool right = false;
 
-        Font arial60 = new Font("Arial", 60);
+        Font arial60 = new Font("Arial", 56);
+        Font arial48 = new Font("Arial", 48);
 
         public Form1()
         {
             InitializeComponent();
+
+            JoinInput.Enabled = false;
+            JoinBTN.Enabled = true;
+            HostBTN.Enabled = false;
+
+            JoinInput.Visible = false;
+            JoinBTN.Visible = true;
+            HostBTN.Visible = false;
 
             JoinBTN.Location = new Point(pb.Width / 2 - JoinBTN.Width / 2, 400);
             HostBTN.Location = new Point(pb.Width / 2 - HostBTN.Width / 2, JoinBTN.Location.Y + 40);
@@ -76,18 +85,22 @@ namespace PongClient
             }
             else if (e.KeyCode== Keys.Escape)
             {
-                await connection.DisposeAsync();
+                if (connection != null)
+                {
+                    await connection.DisposeAsync();
+                }
+                
                 //await server.StopServerAsync();
 
                 partie = null;
 
-                JoinInput.Visible = true;
+                JoinInput.Visible = false;
                 JoinBTN.Visible = true;
-                HostBTN.Visible = true;
+                HostBTN.Visible = false;
 
-                JoinInput.Enabled = true;
+                JoinInput.Enabled = false;
                 JoinBTN.Enabled = true;
-                HostBTN.Enabled = true;
+                HostBTN.Enabled = false;
 
                 Refresh();
             }
@@ -115,8 +128,8 @@ namespace PongClient
                 e.Graphics.DrawString(
                     texte,
                     arial60,
-                    Brushes.White,
-                    new PointF((pb.Width - sz.Width) / 2, 200)
+                    Brushes.Black,
+                    new PointF((pb.Width - sz.Width) / 2, 300)
                 );
 
                 return;
@@ -127,13 +140,13 @@ namespace PongClient
                 partie.player1.Draw(e.Graphics, Properties.Resources.plateforme);
 
                 string texte = partie.player1.Score.ToString();
-                SizeF sz = e.Graphics.MeasureString(texte, arial60);
+                SizeF sz = e.Graphics.MeasureString(texte, arial48);
 
                 e.Graphics.DrawString(
                     texte,
-                    arial60,
+                    arial48,
                     Brushes.Black,
-                    new PointF((pb.Width - sz.Width) / 2, 100)
+                    new PointF((pb.Width - sz.Width) / 2, 70)
                 );
             }
 
@@ -142,13 +155,13 @@ namespace PongClient
                 partie.player2.Draw(e.Graphics, Properties.Resources.plateforme2);
 
                 string texte = partie.player2.Score.ToString();
-                SizeF sz = e.Graphics.MeasureString(texte, arial60);
+                SizeF sz = e.Graphics.MeasureString(texte, arial48);
 
                 e.Graphics.DrawString(
                     texte,
-                    arial60,
+                    arial48,
                     Brushes.Black,
-                    new PointF((pb.Width - sz.Width) / 2, 500)
+                    new PointF((pb.Width - sz.Width) / 2, 540)
                 );
             }
 
@@ -161,6 +174,8 @@ namespace PongClient
             {
                 adresse = "localhost";
             }
+
+            adresse = "PC-BD18-17";
 
             connection = new HubConnectionBuilder()
                 .WithUrl($"http://{adresse}:5000/pong")
@@ -181,13 +196,13 @@ namespace PongClient
 
                 partie = null;
 
-                JoinInput.Visible = true;
+                JoinInput.Visible = false;
                 JoinBTN.Visible = true;
-                HostBTN.Visible = true;
+                HostBTN.Visible = false;
 
-                JoinInput.Enabled = true;
+                JoinInput.Enabled = false;
                 JoinBTN.Enabled = true;
-                HostBTN.Enabled = true;
+                HostBTN.Enabled = false;
 
                 Refresh();
             };
@@ -286,13 +301,13 @@ namespace PongClient
 
                 Invoke(new Action( () =>
                 {
-                    JoinInput.Visible = true;
+                    JoinInput.Visible = false;
                     JoinBTN.Visible = true;
-                    HostBTN.Visible = true;
+                    HostBTN.Visible = false;
 
-                    JoinInput.Enabled = true;
+                    JoinInput.Enabled = false;
                     JoinBTN.Enabled = true;
-                    HostBTN.Enabled = true;
+                    HostBTN.Enabled = false;
 
                     Refresh();
                 }));

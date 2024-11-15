@@ -72,7 +72,7 @@
             JoinBTN.Name = "JoinBTN";
             JoinBTN.Size = new Size(100, 23);
             JoinBTN.TabIndex = 3;
-            JoinBTN.Text = "Join";
+            JoinBTN.Text = "Jouer";
             JoinBTN.UseVisualStyleBackColor = true;
             JoinBTN.Click += JoinBTN_Click;
             // 
