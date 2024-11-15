@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PongLibrary\PongLibrary.csproj" />
-    <ProjectReference Include="..\PongServer\PongServer.csproj" />
   </ItemGroup>
 
 </Project>

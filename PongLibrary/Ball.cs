@@ -19,6 +19,15 @@ namespace PongLibrary
             this.Vy = vx;
         }
 
+        public void Respawn(int x, int y,int d, int vx, int vy)
+        {
+            this.X = x;
+            this.Y = y;
+            this.D = d;
+            this.Vx = vx;
+            this.Vy = vy;
+        }
+
         public void Update(int w, int h)
         {
             this.X += this.Vx;

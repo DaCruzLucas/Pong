@@ -12,7 +12,9 @@ namespace PongServer
         private Dictionary<int, Partie> Parties = new Dictionary<int, Partie>();
         private string HostId;
 
-        private int id = 0;
+        private int id = -1;
+
+        private Random rnd = new Random();
 
         public PongService(IHubContext<PongHub> hub)
         {
@@ -24,21 +26,59 @@ namespace PongServer
 
         private async void Tick(object sender, ElapsedEventArgs e)
         {
-            //Console.WriteLine("Tick! The time is {0:HH:mm:ss.fff}", e.SignalTime);
+            var partiesCopy = Parties.Values.ToList();
 
             for (int i = 0; i < Parties.Values.Count; i++)
             {
-                Partie partie = Parties.Values.ElementAt(i);
+                Partie partie = partiesCopy[i];
+
                 partie.ball.Update(650, 700);
-
-                if (partie.player1 != null)
+                
+                if (partie.ball.Y <= 1 && partie.player1 != null && partie.player2 != null)
                 {
-                    Collide(partie, partie.player1);
+                    partie.player2.Score++;
+
+                    int vx = rnd.Next(0,2);
+
+                    if (vx == 0)
+                    {
+                        vx = -8;
+                    }
+                    else
+                    {
+                        vx = 8;
+                    }
+
+                    partie.ball.Respawn(325, 350, 30, vx, 7);
                 }
-
-                if (partie.player2 != null)
+                else if (partie.ball.Y >= 690 && partie.player1 != null && partie.player2 != null)
                 {
-                    Collide(partie, partie.player2);
+                    partie.player1.Score++;
+
+                    int vx = rnd.Next(0, 2);
+
+                    if (vx == 0)
+                    {
+                        vx = -8;
+                    }
+                    else
+                    {
+                        vx = 8;
+                    }
+
+                    partie.ball.Respawn(325, 350, 30, vx, -7);
+                }
+                else
+                {
+                    if (partie.player1 != null)
+                    {
+                        Collide(partie, partie.player1);
+                    }
+
+                    if (partie.player2 != null)
+                    {
+                        Collide(partie, partie.player2);
+                    }
                 }
 
                 int[] ball = new int[] { partie.ball.X, partie.ball.Y, partie.ball.D, partie.ball.Vx, partie.ball.Vy };
