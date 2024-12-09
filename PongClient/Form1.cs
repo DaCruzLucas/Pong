@@ -175,7 +175,7 @@ namespace PongClient
                 adresse = "localhost";
             }
 
-            adresse = "PC-BD18-17";
+            adresse = "localhost";
 
             connection = new HubConnectionBuilder()
                 .WithUrl($"http://{adresse}:5000/pong")

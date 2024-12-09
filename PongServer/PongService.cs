@@ -196,6 +196,8 @@ namespace PongServer
                 {
                     Parties[id].player2 = new Player(player2[0], player2[1], player2[2], player2[3]);
                     Parties[id].player2.ConnectionId = connectionId;
+
+                    RespawnBall(Parties[id], 325, 600, -8).Wait();
                 }
                 else
                 {
